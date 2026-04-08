@@ -1,0 +1,49 @@
+/* theme-ios.css — iOS 风格（默认主题） */
+
+/* 通话页 */
+:root, [data-theme="ios"] {
+    --bg-color: #000000;
+    --bg-glass: rgba(255, 255, 255, 0.15);
+    --bg-glass-active: #FFFFFF;
+    --text-primary: #FFFFFF;
+    --text-secondary: #8E8E93;
+    --icon-active: #000000;
+    --system-green: #34C759;
+    --system-red: #FF3B30;
+    --system-blue: #0A84FF;
+    --system-gray-bg: #1C1C1E;
+    --system-input-bg: #2C2C2E;
+    --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+    --border-radius-card: 12px;
+    --border-radius-btn: 50%;
+    --bg-blur-gradient: radial-gradient(circle at 50% 15%, #2a2a30 0%, #000000 65%);
+    --dial-name-size: 36px;
+    --ctrl-btn-size: 72px;
+    --topbar-bg: transparent;
+
+    /* 登录页 */
+    --login-bg: #E5E5EA;
+    --login-container-bg: #F2F2F7;
+    --login-text: #000;
+    --login-text-secondary: #8E8E93;
+    --login-card-bg: #FFFFFF;
+    --login-input-bg: #FFFFFF;
+    --login-input-border: transparent;
+    --login-btn-bg: #007AFF;
+    --login-btn-color: #FFFFFF;
+    --login-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    --login-radius: 12px;
+
+    /* 设置页 */
+    --setup-bg: #E5E5EA;
+    --setup-container-bg: #F2F2F7;
+    --setup-text: #000;
+    --setup-text-secondary: #8E8E93;
+    --setup-card-bg: #FFFFFF;
+    --setup-input-bg: #FFFFFF;
+    --setup-divider: #C6C6C8;
+    --setup-btn-bg: #007AFF;
+    --setup-btn-color: #FFFFFF;
+    --setup-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    --setup-radius: 12px;
+}

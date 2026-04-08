@@ -1,0 +1,50 @@
+/* theme-y2k.css — 千禧年 / 诺基亚风格主题 */
+/* ✏️ 这个文件可以单独交给设计师或 AI 来美化，不影响其他代码 */
+
+/* 通话页 */
+[data-theme="y2k"] {
+    --bg-color: #2b3a4a;
+    --bg-glass: rgba(100, 180, 220, 0.25);
+    --bg-glass-active: #7ec8e3;
+    --text-primary: #e0f0e8;
+    --text-secondary: #8ab8a0;
+    --icon-active: #1a2a3a;
+    --system-green: #4caf50;
+    --system-red: #e53935;
+    --system-blue: #42a5f5;
+    --system-gray-bg: #1e2d3d;
+    --system-input-bg: #263848;
+    --font-main: "Courier New", "Nokia Sans", monospace;
+    --border-radius-card: 4px;
+    --border-radius-btn: 8px;
+    --bg-blur-gradient: linear-gradient(180deg, #3a5a6a 0%, #1a2a3a 100%);
+    --dial-name-size: 28px;
+    --ctrl-btn-size: 64px;
+    --topbar-bg: rgba(30, 45, 60, 0.9);
+
+    /* 登录页 */
+    --login-bg: #1a2a3a;
+    --login-container-bg: #2b3a4a;
+    --login-text: #e0f0e8;
+    --login-text-secondary: #8ab8a0;
+    --login-card-bg: #263848;
+    --login-input-bg: #1e2d3d;
+    --login-input-border: #4a7a6a;
+    --login-btn-bg: #4caf50;
+    --login-btn-color: #fff;
+    --login-font: "Courier New", "Nokia Sans", monospace;
+    --login-radius: 4px;
+
+    /* 设置页 */
+    --setup-bg: #1a2a3a;
+    --setup-container-bg: #2b3a4a;
+    --setup-text: #e0f0e8;
+    --setup-text-secondary: #8ab8a0;
+    --setup-card-bg: #263848;
+    --setup-input-bg: #1e2d3d;
+    --setup-divider: #4a7a6a;
+    --setup-btn-bg: #4caf50;
+    --setup-btn-color: #fff;
+    --setup-font: "Courier New", "Nokia Sans", monospace;
+    --setup-radius: 4px;
+}

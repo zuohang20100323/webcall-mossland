@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>准备通话</title>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="YLPhone">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<meta name="theme-color" content="#007AFF">
+<style>
+
+  /* 苹果原生的基础重置与字体设置 */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    min-height: 100%;
+    background: #E5E5EA;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 内部应用容器（适配多尺寸屏幕） */
+  .app-container {
+    background: #F2F2F7;
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 120px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+  }
+
+  /* iOS Large Title 大标题 */
+  .large-title {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: 0.37px;
+    color: #000;
+    line-height: 1.2;
+    padding: 60px 20px 16px;
+  }
+
+  /* iOS 系统分组卡片 (Grouped Card) */
+  .ios-group {
+    background: #FFFFFF;
+    border-radius: 12px;
+    margin: 0 20px 24px;
+    padding: 16px;
+  }
+
+  .card-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    color: #8E8E93;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .optional-tag {
+    color: #8E8E93;
+    font-weight: 400;
+    font-size: 15px;
+  }
+
+  /* 表单输入控件规范化 */
+  textarea, input[type="text"], input[type="password"], input[type="url"], select {
+    width: 100%;
+    background: #F2F2F7; /* 浅灰输入框背景 */
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: #000;
+    font-size: 17px;
+    padding: 14px 16px;
+    font-family: inherit;
+    outline: none;
+    resize: vertical;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: all 0.2s ease;
+  }
+
+  textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="url"]:focus, select:focus {
+    background: #FFFFFF;
+    border-color: #C7C7CC;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  textarea::placeholder, input::placeholder {
+    color: #C7C7CC;
+  }
+
+  /* select 增加一个极简的下拉箭头指示 */
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C7C7CC' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+  }
+
+  /* iOS 表脚注释/隐私提示 (Footer Note) */
+  .privacy-hint {
+    font-size: 13px;
+    color: #8E8E93;
+    margin-top: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.4;
+    padding: 0 4px;
+  }
+
+  .privacy-hint svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* 折叠面板头部 */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .section-header .arrow {
+    font-size: 14px;
+    color: #C7C7CC;
+    font-family: sans-serif;
+  }
+
+  .section-content {
+    display: none;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 0.5px solid #E5E5EA; /* iOS 分割线 */
+  }
+
+  .section-content.open {
+    display: block;
+  }
+
+  /* 子块布局 */
+  .sub-section {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 0.5px solid #E5E5EA;
+  }
+
+  .sub-section:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .sub-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 6px;
+  }
+
+  .sub-desc {
+    font-size: 13px;
+    color: #8E8E93;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .field-group {
+    margin-bottom: 16px;
+  }
+
+  .field-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+    margin-bottom: 8px;
+    padding-left: 2px;
+  }
+
+  .model-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .model-row input, .model-row select {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 二级按钮 (黑白灰配色) */
+  .btn-secondary, .btn-import {
+    background: #E5E5EA;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-import {
+    margin-top: 12px;
+  }
+
+  .btn-secondary:active, .btn-import:active {
+    opacity: 0.5;
+    background: #D1D1D6;
+  }
+
+  .error-msg {
+    color: #FF3B30; /* iOS 系统红 */
+    font-size: 13px;
+    margin-top: 8px;
+    display: none;
+    padding-left: 4px;
+  }
+
+  /* 底部固定操作区 (带透明渐变遮罩) */
+  .start-btn-wrapper {
+    padding: 16px 20px 32px;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: linear-gradient(rgba(242,242,247,0), rgba(242,242,247,0.9) 20%, #F2F2F7 100%);
+    z-index: 100;
+  }
+
+  /* 主按钮 (极简黑白) */
+  .start-btn {
+    width: 100%;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .start-btn:active {
+    opacity: 0.5;
+  }
+
+  #fileInput {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+
+  <h1 class="large-title">准备通话</h1>
+
+    <!-- 语音模型 -->
+  <div class="ios-group">
+    <div class="card-title">语音模型</div>
+    <div class="card-desc">选择语音合成方式</div>
+      <div class="field-group">
+        <select id="ttsMode" onchange="onTtsModeChange()">
+          <option value="apikey">使用 TTS API Key（克隆音色·按量计费）</option>
+          <option value="custom">使用自己的 MiniMax（完全自备）</option>
+        </select>
+      </div>
+
+      <!-- TTS API Key 模式 -->
+      <div id="ttsApiKeySection">
+        <div class="field-group">
+          <div class="field-label">TTS API Key</div>
+          <input type="password" id="ttsApiKeyInput" placeholder="tts-xxxxxxxx...">
+        </div>
+        <div class="sub-desc" style="margin-top:8px">
+          使用克隆音色，按 MiniMax 官方价格计费。
+          <a href="/tts-api" target="_blank" style="font-weight:500">注册/充值 →</a>
+        </div>
+      </div>
+
+      <!-- 自定义 MiniMax 模式 -->
+      <div id="ttsCustomSection" style="display:none">
+        <div class="field-group">
+          <div class="field-label">API Key</div>
+          <input type="password" id="ttsApiKey" placeholder="MiniMax API Key">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Group ID</div>
+          <input type="text" id="ttsGroupId" placeholder="MiniMax Group ID（数字）">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Voice ID（音色）</div>
+          <input type="text" id="ttsVoiceId" placeholder="如 male-qn-qingse">
+        </div>
+        <div class="field-group">
+          <div class="field-label">TTS 模型</div>
+          <select id="ttsModel">
+            <option value="speech-2.8-hd">speech-2.8-hd（高清·支持语气词）</option>
+            <option value="speech-2.8-turbo">speech-2.8-turbo（快速·支持语气词）</option>
+            <option value="speech-02-hd">speech-02-hd（旧版高清）</option>
+            <option value="speech-02">speech-02（旧版标准）</option>
+          </select>
+        </div>
+        <div class="sub-desc" style="margin-top:12px;margin-bottom:0">
+          从 <a href="https://platform.minimax.chat" target="_blank" style="font-weight: 500;">MiniMax 开放平台</a> 获取
+        </div>
+      </div>
+  </div>
+
+    <!-- 对话模式选择 -->
+  <div class="ios-group">
+    <div class="card-title">语言模型</div>
+    <div class="card-desc">内置模型由开发者自费提供，也可以填自己的 API 获得更稳定的体验</div>
+    <select id="llmMode" onchange="onLlmModeChange()">
+      <option value="builtin">内置模型（开发者提供·免费）</option>
+      <option value="custom">自备 API（稳定·用自己的 Key）</option>
+    </select>
+
+    <!-- 公共模型：选择模型 -->
+    <div id="llmBuiltinSection" style="margin-top:16px">
+      <div id="builtinModelContainer">
+        <select id="builtinModelSelect">
+          <option value="" disabled selected>加载中...</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 自备API：URL + Key + 模型 -->
+    <div id="llmCustomSection" style="display:none;margin-top:16px">
+      <div class="field-group">
+        <div class="field-label">API 地址</div>
+        <input type="url" id="llmBaseUrl" placeholder="https://api.example.com/v1">
+      </div>
+      <div class="field-group">
+        <div class="field-label">API Key</div>
+        <input type="password" id="llmApiKey" placeholder="sk-...">
+      </div>
+      <div class="field-group">
+        <div class="field-label">模型标识</div>
+        <div class="model-row">
+          <input type="text" id="llmModel" placeholder="如 gpt-4o">
+          <button class="btn-secondary" onclick="fetchModels()">获取列表</button>
+        </div>
+        <div class="error-msg" id="modelError"></div>
+      </div>
+      <div class="privacy-hint">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>API密钥仅安全地存储在你的本地浏览器中</span>
+      </div>
+    </div>
+  </div>
+
+    <!-- 区块1: 个人信息 -->
+  <div class="ios-group">
+    <div class="card-title">{{ character_name }}想了解你</div>
+    <div class="card-desc">告诉{{ character_name }}关于你的事情，让通话更有温度。</div>
+    <textarea id="userInfo" rows="4" placeholder="介绍一下你自己吧...（你的名字、性格、喜好，任何你想让{{ character_name }}知道的）"></textarea>
+    <div class="privacy-hint">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <span>你的信息不会被存储，仅用于本次通话。</span>
+    </div>
+  </div>
+
+  <!-- 区块2: 话题 -->
+  <div class="ios-group">
+    <div class="card-title">想聊什么话题 <span class="optional-tag">（选填）</span></div>
+    <input type="text" id="topic" placeholder="比如：最近的烦恼、电影推荐、随便聊聊...">
+  </div>
+
+    <!-- 区块3: 补充设定 -->
+  <div class="ios-group">
+    <div class="section-header" onclick="toggleSection('extraPrompt')">
+      <div class="card-title" style="margin-bottom:0">补充设定</div>
+      <div class="arrow" id="arrow-extraPrompt">▶</div>
+    </div>
+    <div class="section-content" id="section-extraPrompt">
+      <div class="sub-desc">添加世界书、角色设定等额外提示词</div>
+      <textarea id="extraPrompt" rows="6" placeholder="粘贴额外的角色设定、世界书内容..."></textarea>
+      <button class="btn-import" onclick="document.getElementById('fileInput').click()">
+        <svg style="vertical-align: text-bottom; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>导入文本文件
+      </button>
+      <input type="file" id="fileInput" accept=".txt,.md,.json" onchange="importFile(event)">
+      <div class="privacy-hint">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>所有设定仅存储在你的浏览器中，不会上传到服务器</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 区块4: 文本过滤 -->
+  <div class="ios-group">
+    <div class="section-header" onclick="toggleSection('textFilter')">
+      <div class="card-title" style="margin-bottom:0">文本过滤</div>
+      <div class="arrow" id="arrow-textFilter">▶</div>
+    </div>
+    <div class="section-content" id="section-textFilter">
+      <div class="sub-desc">内置已自动过滤 AI 思维链标签（如 &lt;think&gt;、&lt;thinking&gt;、&lt;reasoning&gt; 等）。你可以添加额外的过滤规则。</div>
+
+      <div class="sub-section">
+        <div class="sub-title">自定义过滤正则</div>
+        <div class="sub-desc">每行一条正则表达式，匹配到的内容将被移除</div>
+        <textarea id="filterRegex" rows="3" placeholder="例如：\*[^*]+\*&#10;（匹配星号包裹的内心独白）"></textarea>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-title">禁用词</div>
+        <div class="sub-desc">每行一个，精确匹配并移除</div>
+        <textarea id="filterWords" rows="3" placeholder="例如：&#10;内心OS&#10;旁白"></textarea>
+      </div>
+
+      <div class="privacy-hint">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>过滤规则仅存储在浏览器中，过滤在服务端完成</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部固定按钮区 -->
+  <div class="start-btn-wrapper">
+    <button class="start-btn" onclick="startCall()">开始通话</button>
+  </div>
+
+</div>
+
+<script src="/static/setup.js"></script>
+
+</body>
+</html>
