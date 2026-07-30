@@ -1,0 +1,24 @@
+{
+  "name": "voice-mcp-mossland",
+  "version": "1.0.0",
+  "description": "An MCP server for AI voice synthesis with Mossland TTS engine",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.24.0",
+    "zod": "^3.24.0"
+  },
+  "keywords": [
+    "mcp",
+    "voice",
+    "tts",
+    "text-to-speech",
+    "ai",
+    "claude",
+    "mossland"
+  ],
+  "license": "MIT"
+}
