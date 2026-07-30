@@ -101,8 +101,8 @@ function getPlayerHTML(botName) {
 // =============================================================================
 
 const ENV = {
-  MOSSLAND_API_KEY: process.env.MOSSLAND_API_KEY,
-  MOSSLAND_VOICE_ID: process.env.MOSSLAND_VOICE_ID,
+  MOSSLAND_API_KEY: process.env.MOSSLAND_API_KEY || 'sk-262a20f1f94844fe75d7b9718ff657e2eed671a1dc96302e',
+  MOSSLAND_VOICE_ID: process.env.MOSSLAND_VOICE_ID || '1f4af4c7-eb64-49c3-bc72-de9c6ff585bc',
   MOSSLAND_BASE_URL: process.env.MOSSLAND_BASE_URL || 'https://api.mosi.cn/v1',
   MOSSLAND_TTS_MODEL: process.env.MOSSLAND_TTS_MODEL || 'moss-speech-turbo',
   BOT_NAME: process.env.BOT_NAME || 'S.CHI',
